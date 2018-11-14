@@ -2,6 +2,7 @@ package bread
 
 import (
 	"bytes"
+	"encoding/json"
 	"math"
 	"strconv"
 	"unsafe"
@@ -153,12 +154,27 @@ func String(ob *bytes.Buffer, b []byte, offset int32, _ int32) int32 {
 		stringLength uint32
 		size         int32
 	)
+
+	type JSONString struct {
+		Input string
+	}
+
 	stringLength = *(*uint32)(unsafe.Pointer(&b[offset+size]))
 	size = size + 4
 	// log.Debugf("String length: %v", stringLength)
 	stringValue := string(b[offset+size : offset+size+int32(stringLength)])
-	// ob.WriteByte('"')
-	ob.WriteString(strconv.Quote(stringValue))
-	// ob.WriteByte('"')
+
+	// Note: this approach adds some extra backslashes depending on the depth of the structure
+	//   ..but the output is actually valid JSON, which is more important
+	inputString := JSONString{Input: stringValue}
+	outputString := ""
+	out, err := json.Marshal(inputString)
+	if err != nil {
+		outputString = "replaced invalid string"
+	} else {
+		outputString = string(out[10 : len(out)-2])
+	}
+	ob.WriteString(strconv.Quote(outputString))
+
 	return size + int32(stringLength)
 }
