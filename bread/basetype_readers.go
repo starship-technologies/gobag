@@ -147,6 +147,18 @@ func Duration(ob *bytes.Buffer, b []byte, offset int32, _ int32) int32 {
 	return size
 }
 
+func stripCtlAndExtFromBytes(b []byte) []byte {
+	var bl int
+	for i := 0; i < len(b); i++ {
+		c := b[i]
+		if c >= 32 && c < 127 {
+			b[bl] = c
+			bl++
+		}
+	}
+	return b[:bl]
+}
+
 // String reads ...
 func String(ob *bytes.Buffer, b []byte, offset int32, _ int32) int32 {
 	var (
@@ -156,7 +168,7 @@ func String(ob *bytes.Buffer, b []byte, offset int32, _ int32) int32 {
 	stringLength = *(*uint32)(unsafe.Pointer(&b[offset+size]))
 	size = size + 4
 	// log.Debugf("String length: %v", stringLength)
-	stringValue := string(bytes.Replace(b[offset+size:offset+size+int32(stringLength)], []byte("\xff"), []byte(""), -1))
+	stringValue := string(stripCtlAndExtFromBytes(b[offset+size : offset+size+int32(stringLength)]))
 	// ob.WriteByte('"')
 	ob.WriteString(strconv.Quote(stringValue))
 	// ob.WriteByte('"')
