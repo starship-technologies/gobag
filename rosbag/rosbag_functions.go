@@ -168,9 +168,9 @@ func (r *RosBag) ParseTopicsToJSON(extraFields string, timeFilter func(int64) bo
 
 				size = r.readMessage(messageOffset.offset+size, compiledMessageFormat)
 				if size == 0 {
-					err = fmt.Errorf("ReadMessage returned zero read bytes")
-					log.Error("Error while reading message", zap.Error(err))
-					return err
+					err = fmt.Errorf(noSlashTopic)
+					log.Error("Error while reading message in topic: ", zap.Error(err))
+					// return err
 				}
 				r.ob.WriteByte('}')
 				r.ob.WriteByte('\n')
