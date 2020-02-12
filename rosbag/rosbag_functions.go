@@ -19,6 +19,11 @@ func (r *RosBag) SetSource(source string) {
 	r.source = source
 }
 
+// GetSource get's name for the source
+func (r *RosBag) GetSource() string {
+	return r.source
+}
+
 // DumpChunkInfo dumps all messages with related data for debuging
 func (r *RosBag) DumpChunkInfo(filename string) error {
 	// For every chunk
