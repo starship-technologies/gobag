@@ -128,7 +128,7 @@ create external table if not exists bag.{{.bt}}{{.tablename}}{{.bt}} (
 	sqlSuffixTemplateString := `	>
 ) 
 partitioned by (dt string)
-row format serde 'org.openx.data.jsonserde.JsonSerDe'
+row format serde 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
 with serdeproperties (
 	'serialization.format' = '1' ) location '{{.tablename}}/' tblproperties ('has_encrypted_data'='false')
 ;
