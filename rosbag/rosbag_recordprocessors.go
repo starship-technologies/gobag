@@ -190,7 +190,7 @@ func (r *RosBag) processConnectionData(bagReader *bytes.Reader, rh *RosRecordHea
 	if _, present := compiledMessages[rc.MD5sum]; !present {
 		compiledMessageMapLock.RUnlock()
 		compiledMessageMapLock.Lock()
-		message, err := msgpiler.Compile(rc.MessageDefinition, rc.ConnectionType)
+		message, err := msgpiler.Compile(append(rc.MessageDefinition, '\n'), rc.ConnectionType)
 		if err != nil {
 			log.Error("Error while compiling MessageDefinition", zap.Error(err))
 			compiledMessageMapLock.Unlock()
